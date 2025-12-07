@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安全意识挑战 - 第8题</title>
+    <style>
+        /* 样式同 test1.html */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 500px; width: 90%; text-align: center; }
+        .progress-bar { font-size: 14px; color: #6c757d; margin-bottom: 10px; font-weight: bold; }
+        .header { color: #d9534f; font-size: 24px; margin-bottom: 20px; font-weight: bold; }
+        .email-content { border: 1px solid #ddd; padding: 15px; background-color: #fffbe6; text-align: left; margin-bottom: 20px; border-radius: 4px; font-size: 15px; }
+        .email-content p { margin: 10px 0; }
+        .email-content hr { border: 0; border-top: 1px solid #ddd; }
+        .btn-area { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background 0.3s; flex: 1; }
+        .btn-phishing { background-color: #007bff; color: white; }
+        .btn-phishing:hover { background-color: #0056b3; }
+        .btn-safe { background-color: #6c757d; color: white; }
+        .btn-safe:hover { background-color: #545b62; }
+        .btn-next { background-color: #28a745; color: white; width: 100%; margin-top: 15px; display: none; }
+        .btn-next:hover { background-color: #218838; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .alert-box { margin-top: 20px; padding: 15px; display: none; border-radius: 4px; text-align: left; font-size: 14px; line-height: 1.6; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .failure { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="scoreBoard" class="progress-bar">题目：8 / 10</div>
+        <div class="header">🛡️ 强制安全补丁安装</div>
+        <p>请仔细阅读场景，判断是否为钓鱼攻击：</p>
+        <div class="email-content">
+            <p><strong>发件人:</strong> 信息安全中心 &lt;security-patch@zju-it.com.cn&gt;</p>
+            <p><strong>主题:</strong> 【必须执行】您的设备存在高危漏洞，请立即安装安全补丁</p>
+            <hr>
+            <p>为确保您在校内网络的设备安全，请立即点击附件中的“ZJU-Security-Patch.exe”文件，安装系统安全补丁，否则您将在24小时后被隔离出校内网络。</p>
+            <p style="color:red; font-weight:bold;">警告：必须使用管理员权限运行此程序！</p>
+        </div>
+        <div class="btn-area">
+            <button id="btnPhish" class="btn btn-phishing" onclick="makeChoice(true)">是钓鱼</button>
+            <button id="btnSafe" class="btn btn-safe" onclick="makeChoice(false)">安全</button>
+        </div>
+        <div id="resultHint" class="alert-box"></div>
+        <button id="nextBtn" class="btn btn-next" onclick="goNext()">下一条</button>
+    </div>
+    <script>
+        // === 本页配置区域 (题目 8) ===
+        const currentQNum = 8;
+        const nextPageName = "test9.html"; 
+        const isPhishingAnswer = true; // 正确答案：此为钓鱼邮件 (新)
+        const analysis = "❌ 钓鱼！信息安全部门不会通过邮件附件直接发送可执行文件（.exe），并要求用户使用管理员权限运行。这几乎是恶意软件或病毒的投递方式。";
+        // ==============================
+
+        function updateProgress() { document.getElementById('scoreBoard').innerText = `题目：${currentQNum} / 10`; }
+        function makeChoice(userChoice) { 
+            document.getElementById('btnPhish').disabled = true; document.getElementById('btnSafe').disabled = true;
+            const resultHint = document.getElementById('resultHint'); const nextBtn = document.getElementById('nextBtn');
+            const isCorrect = (userChoice === isPhishingAnswer);
+            let score = parseInt(localStorage.getItem('fish_score') || 0); let total = parseInt(localStorage.getItem('fish_total') || 0);
+            if (isCorrect) { score++; localStorage.setItem('fish_score', score.toString()); resultHint.className = "alert-box success"; resultHint.innerHTML = "<strong>✅ 正确！</strong><br>" + analysis; } 
+            else { resultHint.className = "alert-box failure"; resultHint.innerHTML = "<strong>❌ 错误。</strong><br>" + analysis; }
+            total++; localStorage.setItem('fish_total', total.toString());
+            resultHint.style.display = 'block'; nextBtn.style.display = 'block';
+        }
+
+        function goNext() {
+            const total = parseInt(localStorage.getItem('fish_total'));
+            if (total >= 10) { window.location.href = 'result.html'; } else { window.location.href = nextPageName; }
+        }
+        updateProgress();
+    </script>
+</body>
+</html>

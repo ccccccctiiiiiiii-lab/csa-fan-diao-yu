@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安全意识挑战 - 第5题</title>
+    <style>
+        /* 样式同 test1.html */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 500px; width: 90%; text-align: center; }
+        .progress-bar { font-size: 14px; color: #6c757d; margin-bottom: 10px; font-weight: bold; }
+        .header { color: #d9534f; font-size: 24px; margin-bottom: 20px; font-weight: bold; }
+        .email-content { border: 1px solid #ddd; padding: 15px; background-color: #fffbe6; text-align: left; margin-bottom: 20px; border-radius: 4px; font-size: 15px; }
+        .email-content p { margin: 10px 0; }
+        .email-content hr { border: 0; border-top: 1px solid #ddd; }
+        .btn-area { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background 0.3s; flex: 1; }
+        .btn-phishing { background-color: #007bff; color: white; }
+        .btn-phishing:hover { background-color: #0056b3; }
+        .btn-safe { background-color: #6c757d; color: white; }
+        .btn-safe:hover { background-color: #545b62; }
+        .btn-next { background-color: #28a745; color: white; width: 100%; margin-top: 15px; display: none; }
+        .btn-next:hover { background-color: #218838; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .alert-box { margin-top: 20px; padding: 15px; display: none; border-radius: 4px; text-align: left; font-size: 14px; line-height: 1.6; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .failure { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="scoreBoard" class="progress-bar">题目：5 / 10</div>
+        <div class="header">🚫 账户安全警报</div>
+        <p>请仔细阅读场景，判断是否为钓鱼攻击：</p>
+        <div class="email-content">
+            <p><strong>发件人:</strong> IT服务中心 &lt;account-security@zju-it-service.com&gt;</p>
+            <p><strong>主题:</strong> 【最后通知】您的统一身份认证账户即将被冻结，请立即更新密码</p>
+            <hr>
+            <p>经系统检查，您的账户密码已过有效期并存在安全漏洞。如果不在12小时内点击下方链接更新密码，我们将永久冻结您的账号，以防止数据泄露。</p>
+            <p style="color:red; font-weight:bold;">请注意：这是最后一次通知！<a href="http://zju.safe-pass-reset.cn/update-password">点击此处进入重置页面</a></p>
+        </div>
+        <div class="btn-area">
+            <button id="btnPhish" class="btn btn-phishing" onclick="makeChoice(true)">是钓鱼</button>
+            <button id="btnSafe" class="btn btn-safe" onclick="makeChoice(false)">安全</button>
+        </div>
+        <div id="resultHint" class="alert-box"></div>
+        <button id="nextBtn" class="btn btn-next" onclick="goNext()">下一条</button>
+    </div>
+    <script>
+        // === 本页配置区域 (题目 5) ===
+        const currentQNum = 5;
+        const nextPageName = "test6.html"; 
+        const isPhishingAnswer = true; // 正确答案：此为钓鱼邮件 (新)
+        const analysis = "❌ 钓鱼！邮件利用威胁（永久冻结）和紧迫感，强制要求用户点击外部链接（<span style='font-family:monospace;'>zju.safe-pass-reset.cn</span>）输入密码。重置密码应通过官方认证平台。";
+        // ==============================
+
+        function updateProgress() { document.getElementById('scoreBoard').innerText = `题目：${currentQNum} / 10`; }
+        function makeChoice(userChoice) { 
+            document.getElementById('btnPhish').disabled = true; document.getElementById('btnSafe').disabled = true;
+            const resultHint = document.getElementById('resultHint'); const nextBtn = document.getElementById('nextBtn');
+            const isCorrect = (userChoice === isPhishingAnswer);
+            let score = parseInt(localStorage.getItem('fish_score') || 0); let total = parseInt(localStorage.getItem('fish_total') || 0);
+            if (isCorrect) { score++; localStorage.setItem('fish_score', score.toString()); resultHint.className = "alert-box success"; resultHint.innerHTML = "<strong>✅ 正确！</strong><br>" + analysis; } 
+            else { resultHint.className = "alert-box failure"; resultHint.innerHTML = "<strong>❌ 错误。</strong><br>" + analysis; }
+            total++; localStorage.setItem('fish_total', total.toString());
+            resultHint.style.display = 'block'; nextBtn.style.display = 'block';
+        }
+
+        function goNext() {
+            const total = parseInt(localStorage.getItem('fish_total'));
+            if (total >= 10) { window.location.href = 'result.html'; } else { window.location.href = nextPageName; }
+        }
+        updateProgress();
+    </script>
+</body>
+</html>
